@@ -1,0 +1,21 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "http.js",
+  "scripts": {
+    "start": "electron ./desktopGui/electron.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "cryptr": "^6.0.2",
+    "electron": "^17.1.0",
+    "express": "^4.17.3",
+    "fs": "0.0.1-security",
+    "nodemon": "^2.0.15",
+    "sha256": "^0.2.0",
+    "simple-xmpp": "^2.3.1"
+  }
+}

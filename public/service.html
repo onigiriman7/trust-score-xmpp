@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select a service</title>
+</head>
+<body>
+    Service screen
+    <form action="http://localhost:3000/service" method="POST">
+        <input type="text" name="to" placeholder="name" id="to"/>
+        <input type="text" name="message" placeholder="passy"/>
+        <input type="submit">
+    </form>
+    <ul id="container"></ul>
+    <button onclick="sendTemp()">
+        Send Temp to adress
+    </button>
+
+    <button onclick="rateService()">
+        Rate a service provider
+    </button>
+
+</body>
+
+<script type="text/javascript">
+    var to = "";
+    function enterScore(name){
+        to = name; 
+        console.log(to)
+        var service = document.getElementById("serviceSelection");
+        service.innerHTML = "<input id='score' type='text' name='score'/> <input id='key' type='text' name='key'/> <button onclick='submitScore()'>Submit</button>"
+    }
+    
+    function rateService(){
+        var service = document.createElement("div");
+        service.setAttribute("id", "serviceSelection");
+        service.innerText = "Works"
+        service.innerHTML = ("<button id='pavan'>Pavan</button> <button id='akash'>Akash</button> <button id='varun'>Varun</button>")
+        document.body.appendChild(service)
+        document.getElementById('pavan').addEventListener("click", ()=>enterScore("pavan"));
+        document.getElementById('akash').addEventListener("click", ()=>enterScore("akash"));
+        document.getElementById('varun').addEventListener("click", ()=>enterScore("varun"));
+    }
+    function submitScore(){
+        var score = document.getElementById('score');
+        var key = document.getElementById('key').value;
+        score = score.value;
+        console.log(score);
+        fetch('http://localhost:3000/score', 
+        {
+            method:"POST",
+            headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+            body: JSON.stringify({to:to,key: key.toString(), score:score.toString()})
+        }
+        ).then(function(res){ return res.json(); })
+            .then(function(data){ console.log( JSON.stringify( data ) ) })
+        }
+</script>
+
+<script>
+ 
+    //import { fs } from "";
+
+    
+
+
+    fetch("http://localhost:3000/logs").then(res=>res.json()).then(data=>{
+        console.log(data[1]);
+        var container = document.getElementById("container");
+        data = data.map(e => "<li> From: "+e.from.toString() +" Message: "+ e.message.toString()+"</li>")
+        container.innerHTML = data;
+    })
+    async function sendTemp(){
+            // var text = "";
+            // fs.readFile('../data/dummy.txt', 'utf-8', (err,data)=>{
+            //     text = data;
+            // })
+            var toAdress = document.getElementById("to");
+            var to = toAdress.value;
+            console.log(to)
+            var tempData = [56, 75, 23, 45, 62, 23, 12, 34, 35]
+            var data = JSON.stringify({ to:to, message:tempData });
+            console.log(data)
+            await fetch("http://localhost:3000/service",
+            
+            {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            })
+            .then(function(res){ return res.json(); })
+            .then(function(data){ alert( JSON.stringify( data ) ) })
+            
+        }
+</script>
+
+
+</html>
