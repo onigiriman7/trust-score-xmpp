@@ -5,6 +5,7 @@ const path = require('path');
 const app = express()
 const fs = require('fs');
 const sha256 = require('sha256');
+const calculateScores = require('./scoreManager/monitor')
 
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr('myTotalySecretKey');
@@ -33,14 +34,14 @@ app.post("/score", (req,res)=>{
     const encryptScore = cryptr.encrypt(req.body.score.toString() + req.body.key.toString())
     const newData = {to:req.body.to, score:encryptScore, key:sha256(req.body.key)};
    
-    var rawData = fs.readFileSync('./scoreLogs.json');
+    var rawData = fs.readFileSync('./scoreManager/scoreLogs.json');
     var scoreData = JSON.parse(rawData);
     console.log(scoreData);
     scoreData.push(newData);
     // fs.open("./scoreLogs.json","a",(err,fd)=>{
     //     fs.write(fd, data, ()=>console.log("Shared Score File Updated!"))
     // })
-    fs.writeFile("./scoreLogs.json",JSON.stringify(scoreData),(e)=>console.log("Error", e));
+    fs.writeFile("./scoreManager/scoreLogs.json",JSON.stringify(scoreData),(e)=>console.log("Error", e));
     
 })
 app.get("/service",(req,res)=>{
@@ -51,6 +52,11 @@ app.get('/logs',(req,res)=>{
 })
 app.get("/",(req,res)=>{
     res.sendFile(path.join(__dirname, 'public/', 'index.html'))
+})
+
+app.get('/scoreTable', (req,res)=>{
+    const data = calculateScores();
+    res.json(data)
 })
 app.use('/static', express.static('./src/'))
 console.log("running")
